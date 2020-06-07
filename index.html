@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Chat app</title>
+    <link rel="stylesheet" href="bootstrap.min.css" />
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+    <div id="app">
+        <nav class="navbar navbar-dark bg-dark">
+            <a class="navbar-brand" href="javascript:;">Chat room</a>
+
+            <span v-if="ready" class="username">Hello, {{username}}</span>
+        </nav>
+
+        <div class="container">
+
+            <div class="col-lg-6 offset-lg-3">
+
+                <div v-if="ready">
+                    <p v-for="user in info">
+                        {{user.username}} {{user.type}}
+                    </p>
+                </div>
+                <div class="alert alert-danger" role="alert" v-if="!ready && loginMessage">
+                    {{loginMessage}}
+                </div>
+                <div v-if="!ready">
+
+
+                    <form @submit.prevent="addUser">
+                        <div class="form-group">
+                            <input type="text" class="form-control" v-model="username" placeholder="Username">
+                        </div>
+
+                        <div class="form-group">
+                            <input type="password" class="form-control" v-model="password" placeholder="Password">
+                        </div>
+
+                        <div class="form-group">
+                            <input type="submit" value="Login" class="btn btn-dark float-right">
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+
+            <div class="col-lg-9 offset-lg-3"></div>
+                <div class="card bg-light" v-if="ready">
+                    <div class="card-header text-white">
+                        <span class="float-right online-count text-secondary"><span class="led"></span>{{connections}} people online</span>
+                    </div>
+                    <ul class="list-group list-group-flush text-right">
+                        <small v-if="typing" class="text-white">{{typing}} is typing</small>
+                        <li class="list-group-item chat-message" v-for="message in messages">
+                            <span :class="[message.type === 1 ? 'float-left' : 'float-right']">
+                                <div :class="['alert', 'bubble', message.type === 1 ? 'alert-secondary' : 'alert-info']" role="alert">
+                                    <strong>{{message.user}}:</strong> {{message.message}}
+                                  </div>
+                            </span>
+                        </li>
+                    </ul>
+
+                    <div class="card-body">
+                        <form @submit.prevent="send">
+                            <div class="form-group">
+                                <input type="text" class="form-control" v-model="newMessage"
+                                    placeholder="Enter message here">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+<script src="vue.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="axios.js"></script>
+<script src="script.js"></script>
+
+</html>
