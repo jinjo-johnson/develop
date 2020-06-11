@@ -1,4 +1,4 @@
-const socket = io();
+const socket = io('http://localhost:3000');
 const vue = new Vue({
     el: '#app',
 
@@ -15,15 +15,22 @@ const vue = new Vue({
     },
 
     created() {
-        window.onbeforeunload = () => {
-            socket.emit('leave', this.username);
+
+        if(window.localStorage.getItem('username')){
+            this.ready = false;
+            console.log(window.localStorage.getItem('username'))
         }
+        
+        // window.onbeforeunload = () => {
+        //     alert(111)
+        //     socket.emit('leave', this.username);
+        // }
 
         socket.on('chat-message', (data) => {
             this.messages.push({
                 message: data.message,
                 type: 1,
-                user: data.user,
+                user: data.name,
             });
         });
 
@@ -44,7 +51,7 @@ const vue = new Vue({
 
             setTimeout(() => {
                 this.info = [];
-            }, 5000);
+            }, 3000);
         });
 
         socket.on('leave', (data) => {
@@ -79,25 +86,54 @@ const vue = new Vue({
 
             socket.emit('msgToServer', {
                 message: this.newMessage,
-                user: this.username
+                name: this.username
             });
             this.newMessage = null;
         },
 
         async addUser() {
-            const response = await axios.post('/login', {
+            axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
+            const response = await axios.post('http://localhost:3000/auth/signIn', {
                 username: this.username,
                 password: this.password,
             });
 
-            if (response.data.status) {
+            console.log("response.data.status");
+            console.log(response.data.status);
+
+            if (response.data.status == true) {
+                console.log(response.data);
                 this.ready = true;
+                window.localStorage.setItem('username', this.username);
                 socket.emit('joined', this.username);
             } else {
                 this.ready = false;
+                
                 this.loginMessage = response.data.message;
             }
-        }
+        },
+        // async createUser() {
+        //     axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
+        //     const response = await axios.post('http://localhost:3000/auth/signup', {
+        //         username: this.username,
+        //         password: this.password,
+        //     });
+
+        //     console.log("response.data.status");
+        //     console.log(response.data.status);
+
+        //     if (response.data.status == true) {
+        //         console.log(response.data);
+        //         this.ready = true; 
+        //         this.signup= false;
+        //         socket.emit('joined', this.username);
+        //     } else {
+        //         this.ready = false;
+        //         this.signup= true;
+        //         this.loginMessage = response.data.message;
+        //     }
+        // }
+
     },
 
 });
