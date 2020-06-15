@@ -4,8 +4,9 @@
   <form @submit.prevent="login">
     <div class="form-group">
     <div v-if="err_msg" class="alert alert-danger" role="alert">
-      Invalid username or password!
+      Please enter the invalid username or password!
     </div>
+
     <input type="text" class="form-control" v-model="username" placeholder="Username">
     </div>
 
@@ -45,6 +46,7 @@
     methods: {
       async login(){
         let uri = 'http://localhost:3000/auth/signIn';
+        if(this.username && this.password) {
             const response = await this.axios.post(uri, {
                 username: this.username,
                 password: this.password,
@@ -55,11 +57,16 @@
                 socket.emit('joined', localStorage.username);
                 const path = `/chatRoom`
                 if (this.$route.path !== path) this.$router.push(path)
+                location.reload(true);
             } else {
                 this.ready = false;
                 this.err_msg = true;
                 this.loginMessage = response.data.message;
             }
+          }
+          else{
+                this.err_msg = true;
+          }
       }
     }
 

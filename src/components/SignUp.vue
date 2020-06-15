@@ -1,6 +1,9 @@
 <template> 
 <div class="container">
   <form @submit.prevent="signup">
+    <div  v-if="err_msg_signup" class="alert alert-danger" role="alert">
+      Please enter the username and password !
+    </div>
     <div class="form-group">
     <input type="text" class="form-control" v-model="username" placeholder="Username">
     </div>
@@ -24,7 +27,8 @@
     data() {
       return {
         username: null,
-        password: null
+        password: null,
+        err_msg_signup: false
       }
     },
     created(){ 
@@ -35,12 +39,14 @@
     methods: {
       async signup(){
         let uri = 'http://localhost:3000/auth/signup';
+        if(this.username && this.password) {
             const response = await this.axios.post(uri, {
                 username: this.username,
                 password: this.password,
             });
            
-            if (response.data.status) {
+            if (response.data.status  == true) {
+                console.log("I'm jinjo , now @signup fun res");
                 this.ready = true;
                 localStorage.username = this.username;
                 socket.emit('joined', localStorage.username);
@@ -48,9 +54,13 @@
                 if (this.$route.path !== path) this.$router.push(path)
             } else {
                 this.ready = false;
-                const path = `/home`
+                const path = `/`
                 if (this.$route.path !== path) this.$router.push(path)
             }
+        }
+        else{
+              this.err_msg_signup = true;
+        }
       }
     }
 

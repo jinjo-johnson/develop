@@ -13,7 +13,7 @@
   export default {
     data() {
       return {
-        ready: true,
+        ready: false,
         username: null,
         messages: []
       }
