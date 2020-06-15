@@ -3,6 +3,9 @@
 <div class="container">
   <form @submit.prevent="login">
     <div class="form-group">
+    <div v-if="err_msg" class="alert alert-danger" role="alert">
+      Invalid username or password!
+    </div>
     <input type="text" class="form-control" v-model="username" placeholder="Username">
     </div>
 
@@ -16,6 +19,7 @@
     <div class="form-group">
         <a class="btn btn-dark float-right" style="margin-right: 10px;" href="/create">Sign Up</a>
     </div>
+
     
   </form>
 </div>
@@ -29,7 +33,8 @@
     data() {
       return {
         username: null,
-        password: null
+        password: null,
+        err_msg: false
       }
     },
     created(){ 
@@ -52,6 +57,7 @@
                 if (this.$route.path !== path) this.$router.push(path)
             } else {
                 this.ready = false;
+                this.err_msg = true;
                 this.loginMessage = response.data.message;
             }
       }
