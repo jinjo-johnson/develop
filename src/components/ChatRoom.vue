@@ -3,7 +3,7 @@
             <div class="col-lg-9 offset-lg-3"></div>
                 <div class="card bg-light" >
                     <div class="card-header text-white">
-                        <span class="float-right online-count text-secondary"><span class="led"></span>{{connections}} people online</span>
+                        <span class="float-right online-count text-secondary"><span class="led"></span>People online</span>
                     </div>
                     <ul class="list-group list-group-flush text-right">
                         
